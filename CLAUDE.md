@@ -142,6 +142,15 @@ curl -X POST http://localhost:3000/api/chat \
 
 > 참고: `backend-developer` 에이전트는 FastAPI/LangGraph 전용이므로 본 템플릿에서는 사용하지 않습니다.
 
+## 디자인 시스템
+
+프론트엔드 작업(페이지/컴포넌트 생성·수정, 스타일링, 레이아웃 변경 등)을 수행할 때는 반드시 [DESIGN.md](DESIGN.md)를 먼저 참고하세요.
+
+- 색상, 타이포그래피, 간격(spacing), 모서리(radius), 컴포넌트 스펙은 `DESIGN.md` 프론트매터의 토큰을 기준으로 사용합니다.
+- 인라인 hex/px 값을 새로 도입하지 말고 정의된 토큰(`{colors.*}`, `{typography.*}`, `{spacing.*}`, `{rounded.*}`, `{component.*}`)을 참조하세요.
+- "Do's and Don'ts" 섹션의 규칙(단일 액센트 컬러, 그림자 사용 제한, 라운드 규격 등)을 반드시 준수합니다.
+- 새 컴포넌트를 만들기 전에 `DESIGN.md`의 `components:` 항목에 유사한 정의가 있는지 먼저 확인하세요.
+
 ## 코딩 컨벤션
 
 - TypeScript strict 모드 준수
