@@ -23,6 +23,15 @@
     "skill-creator@claude-plugins-official": true,
     "figma@claude-plugins-official": true,
     "supabase@claude-plugins-official": true,
-    "vercel@claude-plugins-official": true
+    "vercel@claude-plugins-official": true,
+    "eli5@claude-community": true
+  },
+  "extraKnownMarketplaces": {
+    "claude-community": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-community"
+      }
+    }
   }
 }
