@@ -50,17 +50,19 @@ AI(ChatGPT·Claude·Gemini 등)가 만든 한글 텍스트의 시그니처 패�
 
 ## 협업
 
-- **ai-tell-detector**: 분류 체계를 입력으로 받아 탐지 수행. 탐지기가 "분류 불가" span을 반환하면 분류학자가 신규 패턴 후보로 검토.
-- **korean-style-rewriter**: 분류 체계의 `suggested_fix`는 윤문가의 레시피와 동기화돼야 함. 충돌 시 윤문가와 합의.
-- **naturalness-reviewer**: 반복적으로 같은 미분류 패턴이 리뷰에서 걸리면 분류학자에게 에스컬레이션.
+- **humanize-diagnostician**(정밀 P1): 진단 콜이 taxonomy를 읽어 지배 패턴을 판정한다. 진단이 "분류 불가" 구간을 보고하면 분류학자가 신규 패턴 후보로 검토.
+- **quick-rules 빌드**: taxonomy의 `_quick` 메타·`suggested_fix`가 SSOT다. `scripts/build_quick_rules.py`가 fast 룰북(`quick-rules.md`)을 생성하므로 taxonomy만 고치면 fast·정밀이 동시에 반영된다(손 동기화 금지 — ID 드리프트 원인).
+- **humanize-finalizer**(정밀 P3): 반복적으로 같은 미분류 패턴이 finalize의 잔존 판정에 걸리면 분류학자에게 에스컬레이션.
 
 ## 이전 산출물이 있을 때의 행동
 
-- `_workspace/taxonomy_changelog.md`가 있으면 읽고 직전 버전 이후 승격/기각 이력을 이어간다.
-- 기존 SSOT의 항목 ID(A-1, A-2 …)는 유지하고, 새 항목은 최하위 번호로 append (삽입 금지 — 탐지기·윤문가의 참조 안정성 보호).
+- **후보 풀·승격 이력은 `references/taxonomy-candidates.md`가 정본이다**(추적 파일). 읽고 쓴다.
+  `_workspace/taxonomy_changelog.md`는 `.gitignore` 대상이라 작업 머신에만 남는다 — 있으면 참고만 하고,
+  새 승격·기각은 `taxonomy-candidates.md`의 이력 절에 적는다.
+- 기존 SSOT의 항목 ID(A-1, A-2 …)는 유지하고, 새 항목은 최하위 번호로 append (삽입 금지 — 진단·윤문 콜의 ID 핸드오프 계약 안정성 보호).
 
 ## 팀 통신 프로토콜
 
-- **수신**: `naturalness-reviewer`에서 "미분류 패턴 후보" 메시지 수신.
-- **발신**: 분류 체계 갱신 완료를 `ai-tell-detector`·`korean-style-rewriter`에 통지하여 리로드 유도.
-- **작업 요청 범위**: 분류 체계 갱신에 한정. 개별 텍스트 탐지·윤문은 각 전문 에이전트에 위임.
+- **수신**: 오케스트레이터 또는 finalize에서 "미분류 패턴 후보" 수신.
+- **발신**: taxonomy(SSOT) 갱신 후 **생성물 두 개를 모두** 재생성한다 — `python3 scripts/build_quick_rules.py` 와 `python3 scripts/build_diagnosis_rules.py`. 하나만 돌리면 CI 의 `--check` 가 막는다(둘 다 drift 검사 대상). 런타임 에이전트는 다음 실행 시 갱신본을 자동 로드한다.
+- **작업 요청 범위**: 분류 체계 갱신에 한정. 개별 텍스트 진단·윤문은 런타임 3콜에 위임.
